@@ -1,9 +1,9 @@
 import logging
 import random
-
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.types import ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardButton
 import Parsing_site
+import Parser_movies
 import json
 import string
 
@@ -18,11 +18,13 @@ dp = Dispatcher(bot)
 
 b1 = KeyboardButton('/Случайное_событие')
 b2 = KeyboardButton('/Все_события')
+b3 = KeyboardButton('/Кино')
+b4 = KeyboardButton('/Случайный_фильм')
 
 
 kb_client = ReplyKeyboardMarkup(resize_keyboard=True)
 
-kb_client.row(b1, b2)
+kb_client.row(b1, b2).row(b3, b4)
 
 @dp.message_handler(commands=['start', 'help'])
 async def send_welcome(message: types.Message):
@@ -33,12 +35,24 @@ async def send_welcome(message: types.Message):
 
 @dp.message_handler(commands=['Все_события'])
 async def send_all_events(message: types.Message):
-    await message.answer(f'Here the results:\n {Parsing_site.string_out}', reply_markup=ReplyKeyboardRemove())
+    await message.answer(f'Here the results:\n {Parsing_site.string_out}') #reply_markup=ReplyKeyboardRemove())
 
 """Create handler, which returns the one random event"""
 @dp.message_handler(commands=['Случайное_событие'])
 async def send_random_event(message: types.Message):
     await message.answer(f'Here the results:\n {random.choice(Parsing_site.out)}')
+
+
+"""Create handler, which returns all cinemas"""
+@dp.message_handler(commands=['Кино'])
+async def send_all_events(message: types.Message):
+    await message.answer(f'Here the results:\n {Parser_movies.string_out}') #reply_markup=ReplyKeyboardRemove())
+
+
+"""Create handler, which returns the one random film"""
+@dp.message_handler(commands=['Случайный_фильм'])
+async def send_random_event(message: types.Message):
+    await message.answer(f'Here the results:\n {random.choice(Parser_movies.out_cinema)}')
 
 
 """Create a checker for bad words"""
