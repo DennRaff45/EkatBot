@@ -6,6 +6,8 @@ from bs4 import BeautifulSoup
 
 res = requests.get('https://www.uralweb.ru/poster/cinema/')
 soup = BeautifulSoup(res.text, 'html.parser')
+
+
 film_name = soup.select('.poster-film-name')
 genre = soup.select('.poster-film-gct')
 href = soup.select('.poster-film-poster a')

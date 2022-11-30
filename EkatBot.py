@@ -11,6 +11,8 @@ API_TOKEN = '5891307674:AAGPQ7xonAQjiafm_ADUGNIjKSJs-a55Pxg'
 
 logging.basicConfig(level=logging.INFO)
 
+"""Create Bot"""
+
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot)
 
@@ -21,18 +23,17 @@ b2 = KeyboardButton('/Все_события')
 b3 = KeyboardButton('/Кино')
 b4 = KeyboardButton('/Случайный_фильм')
 
-
 kb_client = ReplyKeyboardMarkup(resize_keyboard=True)
-
 kb_client.row(b1, b2).row(b3, b4)
 
+
+"""Create a start handler"""
 @dp.message_handler(commands=['start', 'help'])
 async def send_welcome(message: types.Message):
     await message.answer("Hi! I'm EkatBot\nDon't know where to go tonight?.", reply_markup=kb_client)
 
 
 """Create a handler, which returns a list with all events"""
-
 @dp.message_handler(commands=['Все_события'])
 async def send_all_events(message: types.Message):
     await message.answer(f'Here the results:\n {Parsing_site.string_out}') #reply_markup=ReplyKeyboardRemove())
@@ -56,7 +57,6 @@ async def send_random_event(message: types.Message):
 
 
 """Create a checker for bad words"""
-
 @dp.message_handler()
 async def bad_words_cheker(message: types.Message):
     if {i.lower().translate(str.maketrans('', '', string.punctuation)) for i in message.text.split(' ')} \
