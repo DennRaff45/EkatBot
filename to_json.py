@@ -1,6 +1,6 @@
 import json
 
-ar =[]
+ar = []
 
 with open('cenz.txt', encoding='utf-8') as r:
     for i in r:

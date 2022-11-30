@@ -2,11 +2,13 @@ import requests
 from bs4 import BeautifulSoup
 
 
+
 res = requests.get('https://www.uralweb.ru/poster/')
 soup = BeautifulSoup(res.text, 'html.parser')
 event_name = soup.select('.event-name')
 date = soup.select('.event-time-and-place')
 href = soup.select('.event-name a')
+
 out = []
 def create_custom_out(event_name, date, href):
     for i, item in enumerate(event_name):
@@ -18,7 +20,7 @@ def create_custom_out(event_name, date, href):
 
 create_custom_out(event_name, date, href)
 
+"""Return all events"""
 string_out = ''.join(out)
 
-with open('События сегодня.txt', 'w', encoding='utf-8') as file:
-    file.write(''.join(out))
+
