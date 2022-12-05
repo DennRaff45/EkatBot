@@ -2,6 +2,7 @@ import logging
 import random
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.types import ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardButton
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 import Parsing_site
 import Parser_movies
 import CHB_parsing
@@ -27,6 +28,12 @@ b4 = KeyboardButton('/Случайный_фильм')
 b5 = KeyboardButton('/События_в_Челябинске')
 b6 = KeyboardButton('/Кино_в_Челябинске')
 
+inkb = InlineKeyboardMarkup(row_width=2).add(InlineKeyboardButton(text = 'Все события', callback_data='Все события'),\
+                                             InlineKeyboardButton(text = 'Кино', callback_data='Кино'),\
+                                             InlineKeyboardButton(text = 'Случайный фильм', callback_data='Случайный фильм'),\
+                                             InlineKeyboardButton(text = 'События в Челябинске', callback_data='События в Челябинске'),\
+                                             InlineKeyboardButton(text = 'Кино в Челябинске', callback_data='Кино в Челябинске'))
+
 
 kb_client = ReplyKeyboardMarkup(resize_keyboard=True)
 kb_client.row(b1, b2).row(b3, b4).row(b5, b6)
@@ -35,7 +42,40 @@ kb_client.row(b1, b2).row(b3, b4).row(b5, b6)
 """Create a start handler"""
 @dp.message_handler(commands=['start', 'help'])
 async def send_welcome(message: types.Message):
-    await message.answer("Hi! I'm EkatBot\nDon't know where to go tonight?.", reply_markup=kb_client)
+    await message.answer("Hi! I'm Event'sBot\nDon't know where to go tonight?.")
+    await message.answer('Выберите действие:', reply_markup=inkb)
+
+"""Create a handlers for inline buttons"""
+@dp.callback_query_handler(text='Все события')
+async def send_inkb_all_events(callback: types.CallbackQuery):
+    await callback.message.answer(f'Here the results:\n {Parsing_site.string_out}')
+    await callback.message.answer('Выберите действие:', reply_markup=inkb)
+
+@dp.callback_query_handler(text='Кино')
+async def send_inkb_all_films(callback: types.CallbackQuery):
+    await callback.message.answer(f'Here the results:\n {Parser_movies.string_out}')
+    await callback.message.answer('Выберите действие:', reply_markup=inkb)
+
+@dp.callback_query_handler(text='Случайный фильм')
+async def send_inkb_all_films(callback: types.CallbackQuery):
+    await callback.message.answer(f'Here the results:\n {random.choice(Parser_movies.out_cinema)}')
+    await callback.message.answer('Выберите действие:', reply_markup=inkb)
+
+@dp.callback_query_handler(text='Случайное событие')
+async def send_inkb_all_films(callback: types.CallbackQuery):
+    await callback.message.answer(f'Here the results:\n {random.choice(Parsing_site.out)}')
+    await callback.message.answer('Выберите действие:', reply_markup=inkb)
+
+@dp.callback_query_handler(text='События в Челябинске')
+async def send_inkb_all_films(callback: types.CallbackQuery):
+    await callback.message.answer(f'Here the results:\n {CHB_parsing.string_out}')
+    await callback.message.answer('Выберите действие:', reply_markup=inkb)
+
+@dp.callback_query_handler(text='Кино в Челябинске')
+async def send_inkb_all_films(callback: types.CallbackQuery):
+    await callback.message.answer(f'Here the results:\n {Chel_cinema.string_out}')
+    await callback.message.answer('Выберите действие:', reply_markup=inkb)
+
 
 
 """Create a handler, which returns a list with all events"""
@@ -77,6 +117,12 @@ async def bad_words_cheker(message: types.Message):
             .intersection(set(json.load(open('cenz.json')))) != set():
         await message.reply('Маты запрещены')
         await message.delete()
+
+
+@dp.message_handler()
+async def empty(message: types.Message):
+    await message.answer('Нет такой команды')
+    await message.delete()
 
 
 if __name__ == '__main__':
