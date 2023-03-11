@@ -1,4 +1,5 @@
 import logging
+import openai
 import random
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.types import ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardButton
@@ -10,8 +11,13 @@ import Chel_cinema
 import json
 import string
 
+
+"""Telegram bot token"""
 API_TOKEN = '5891307674:AAGPQ7xonAQjiafm_ADUGNIjKSJs-a55Pxg'
 
+"""OpenAI token"""
+OPENAI_TOKEN = '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'
+openai.api_key = OPENAI_TOKEN
 logging.basicConfig(level=logging.INFO)
 
 """Create Bot"""
@@ -42,8 +48,30 @@ kb_client.row(b1, b2).row(b3, b4).row(b5, b6)
 """Create a start handler"""
 @dp.message_handler(commands=['start', 'help'])
 async def send_welcome(message: types.Message):
-    await message.answer("Hi! I'm Event'sBot\nDon't know where to go tonight?.")
+    await message.answer("Hi! I'm Event'sBot\nDon't know where to go tonight?. I can also answer for your question, please ask me...")
     await message.answer('Выберите действие:', reply_markup=inkb)
+
+
+"""Create handler for Chat_GPT"""
+@dp.message_handler()
+async def gpt_answer(message: types.Message):
+    prompt = message.text
+    model_engine = 'text-davinci-003'
+    max_tokens = 1024
+    completion = openai.Completion.create(
+        engine=model_engine,
+        prompt=prompt,
+        max_tokens=max_tokens,
+        temperature=0.5,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0
+    )
+    await message.answer('ChatGPT: Генерирую ответ...')
+    await message.answer('ChatGPT: '+completion.choices[0].text)
+
+
+
 
 """Create a handlers for inline buttons"""
 @dp.callback_query_handler(text='Все события')
